@@ -55,7 +55,7 @@ def enviar_sinal(mensagem):
     except Exception as e:
         print("Erro ao enviar sinal:", e)
 
-def iniciar_bot():
+def principal():
     global último_resultado
     while True:
         resultado = extrair_resultado()
@@ -64,6 +64,9 @@ def iniciar_bot():
             resultados.append(resultado)
 
             sinais = detectar_padroes(resultados)
-for sinal in sinais:
-    mensagem = f"🔔 {sinal}\nÚltimo: {resultado}"
-    enviar_sinal(mensagem)
+            for sinal in sinais:
+                mensagem = f"🔔 {sinal}\nÚltimo: {resultado}"
+                enviar_sinal(mensagem)
+        else:
+            print("Aguardando novo resultado...")
+        time.sleep(10)
