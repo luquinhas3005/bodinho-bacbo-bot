@@ -1,4 +1,22 @@
-import requests
+from flask import Flask
+import threading
+import time
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot está rodando!"
+
+def iniciar_bot():
+    # Coloque aqui o código do seu bot
+    while True:
+        # Lógica do bot
+        time.sleep(10)
+
+if __name__ == '__main__':
+    threading.Thread(target=iniciar_bot).start()
+    app.run(host='0.0.0.0', port=10000)import requests
 import time
 import os
 from bs4 import BeautifulSoup
