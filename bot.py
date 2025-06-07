@@ -8,13 +8,14 @@ from telegram import Bot
 
 app = Flask(__name__)
 
-# Configurações do bot
-TELEGRAM_TOKEN = os.environ.get("8084723198:AAGDxbmNHaRMoJ8k5ciPOhLbRFDUOS0toko
-")
-TELEGRAM_CHAT_ID = os.environ.get("
--1002740925115
-")
+# Carrega as variáveis de ambiente
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 URL_BACBO = "https://www.betano.bet.br/casino/live/games/bac-bo/5605/tables/"
+
+if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
+    print("❌ Erro: TELEGRAM_TOKEN ou TELEGRAM_CHAT_ID não definido.")
+    exit()
 
 bot = Bot(token=TELEGRAM_TOKEN)
 
@@ -46,7 +47,7 @@ def detectar_padroes(historico):
 def enviar_sinal(mensagem):
     try:
         bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=mensagem)
-        print("Sinal enviado:", mensagem)
+        print("✅ Sinal enviado:", mensagem)
     except Exception as e:
         print("Erro ao enviar sinal:", e)
 
@@ -68,7 +69,7 @@ def loop_bot():
 
 @app.route('/')
 def home():
-    return "✅ Bot Bac Bo está rodando!"
+    return "✅ Bot Bac Bo está rodando com sucesso!"
 
 if __name__ == "__main__":
     threading.Thread(target=loop_bot).start()
