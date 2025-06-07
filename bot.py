@@ -1,26 +1,16 @@
 from flask import Flask
 import threading
 import time
+import requests
+import os
+from bs4 import BeautifulSoup
+from telegram import Bot
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
     return "Bot está rodando!"
-
-def iniciar_bot():
-    # Coloque aqui o código do seu bot
-    while True:
-        # Lógica do bot
-        time.sleep(10)
-
-if __name__ == '__main__':
-    threading.Thread(target=iniciar_bot).start()
-    app.run(host='0.0.0.0', port=10000)import requests
-import time
-import os
-from bs4 import BeautifulSoup
-from telegram import Bot
 
 # Configurações do bot
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
@@ -65,7 +55,7 @@ def enviar_sinal(mensagem):
     except Exception as e:
         print("Erro ao enviar sinal:", e)
 
-def principal():
+def iniciar_bot():
     global último_resultado
     while True:
         resultado = extrair_resultado()
@@ -75,11 +65,4 @@ def principal():
 
             sinais = detectar_padroes(resultados)
             for sinal in sinais:
-                mensagem = f"🔔 {sinal}\nÚltimo: {resultado}"
-                enviar_sinal(mensagem)
-        else:
-            print("Aguardando novo resultado...")
-        time.sleep(10)
-
-if __name__ == "__main__":
-    principal()
+                mensagem = f"
