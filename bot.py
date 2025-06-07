@@ -1,25 +1,20 @@
 from flask import Flask
 import threading
-import time
 import requests
+import time
 import os
 from bs4 import BeautifulSoup
 from telegram import Bot
 
 app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return "Bot está rodando!"
-
 # Configurações do bot
-TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
-TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
+TELEGRAM_TOKEN = os.environ.get("8084723198:AAGDxbmNHaRMoJ8k5ciPOhLbRFDUOS0toko
+")
+TELEGRAM_CHAT_ID = os.environ.get("
+-1002740925115
+")
 URL_BACBO = "https://www.betano.bet.br/casino/live/games/bac-bo/5605/tables/"
-
-if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
-    print("Erro: TELEGRAM_TOKEN ou TELEGRAM_CHAT_ID não definido.")
-    exit()
 
 bot = Bot(token=TELEGRAM_TOKEN)
 
@@ -55,7 +50,7 @@ def enviar_sinal(mensagem):
     except Exception as e:
         print("Erro ao enviar sinal:", e)
 
-def principal():
+def loop_bot():
     global último_resultado
     while True:
         resultado = extrair_resultado()
@@ -70,3 +65,11 @@ def principal():
         else:
             print("Aguardando novo resultado...")
         time.sleep(10)
+
+@app.route('/')
+def home():
+    return "✅ Bot Bac Bo está rodando!"
+
+if __name__ == "__main__":
+    threading.Thread(target=loop_bot).start()
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
