@@ -8,14 +8,10 @@ from telegram import Bot
 
 app = Flask(__name__)
 
-# Carrega as variáveis de ambiente
+# Configurações do bot
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 URL_BACBO = "https://www.betano.bet.br/casino/live/games/bac-bo/5605/tables/"
-
-if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
-    print("❌ Erro: TELEGRAM_TOKEN ou TELEGRAM_CHAT_ID não definido.")
-    exit()
 
 bot = Bot(token=TELEGRAM_TOKEN)
 
@@ -23,14 +19,19 @@ resultados = []
 último_resultado = None
 
 def extrair_resultado():
+    print("🔍 Tentando extrair resultado do site...")
     try:
         response = requests.get(URL_BACBO)
         soup = BeautifulSoup(response.text, "html.parser")
         item = soup.select_one('ul > li:nth-child(3) > div')
         if item:
-            return item.text.strip()
+            resultado = item.text.strip()
+            print(f"🎯 Resultado extraído: {resultado}")
+            return resultado
+        else:
+            print("⚠️ Elemento do resultado não encontrado.")
     except Exception as e:
-        print("Erro ao extrair:", e)
+        print("❌ Erro ao extrair:", e)
     return None
 
 def detectar_padroes(historico):
@@ -41,35 +42,40 @@ def detectar_padroes(historico):
     padrao = historico[-3:]
     if padrao[0] != padrao[1] and padrao[1] != padrao[2]:
         sinais.append("Alternância detectada")
-
     return sinais
 
 def enviar_sinal(mensagem):
     try:
         bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=mensagem)
-        print("✅ Sinal enviado:", mensagem)
+        print("📤 Sinal enviado:", mensagem)
     except Exception as e:
-        print("Erro ao enviar sinal:", e)
+        print("❌ Erro ao enviar sinal:", e)
 
 def loop_bot():
     global último_resultado
+    time.sleep(5)  # Aguarda o servidor iniciar
+
+    # Envio de sinal forçado (teste)
+    enviar_sinal("🔧 Teste de sinal automático: bot rodando com sucesso!")
+
     while True:
         resultado = extrair_resultado()
         if resultado and resultado != último_resultado:
             último_resultado = resultado
             resultados.append(resultado)
+            print("📈 Histórico atualizado:", resultados)
 
             sinais = detectar_padroes(resultados)
             for sinal in sinais:
                 mensagem = f"🔔 {sinal}\nÚltimo: {resultado}"
                 enviar_sinal(mensagem)
         else:
-            print("Aguardando novo resultado...")
+            print("⏳ Aguardando novo resultado ou sem mudança...")
         time.sleep(10)
 
 @app.route('/')
 def home():
-    return "✅ Bot Bac Bo está rodando com sucesso!"
+    return "✅ Bot Bac Bo está rodando com scraping e Telegram!"
 
 if __name__ == "__main__":
     threading.Thread(target=loop_bot).start()
