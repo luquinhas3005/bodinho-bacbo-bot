@@ -65,4 +65,6 @@ def iniciar_bot():
 
             sinais = detectar_padroes(resultados)
             for sinal in sinais:
-                mensagem = f"
+                for sinal in sinais:
+    mensagem = f"🔔 {sinal}\nÚltimo: {resultado}"
+    enviar_sinal(mensagem)
